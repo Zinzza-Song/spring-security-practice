@@ -27,10 +27,10 @@ public class NoteService {
      */
     @Transactional(readOnly = true)
     public List<Note> findByUser(User user) {
-        if(user == null)
+        if (user == null)
             throw new UserNotFoundException();
 
-        if(user.isAdmin())
+        if (user.isAdmin())
             return noteRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
 
         return noteRepository.findByUserOrderByIdDesc(user);
@@ -45,7 +45,7 @@ public class NoteService {
      * @return 저장된 노트
      */
     public Note saveNote(User user, String title, String content) {
-        if(user == null)
+        if (user == null)
             throw new UserNotFoundException();
 
         return noteRepository.save(new Note(title, content, user));
@@ -57,12 +57,12 @@ public class NoteService {
      * @param user   삭제하려는 노트의 유저
      * @param noteId 노트 Id
      */
-    public void deleteNote(User user, Long noteId){
-        if(user == null)
+    public void deleteNote(User user, Long noteId) {
+        if (user == null)
             throw new UserNotFoundException();
 
         Note note = noteRepository.findByIdAndUser(noteId, user);
-        if(note != null)
+        if (note != null)
             noteRepository.delete(note);
     }
 

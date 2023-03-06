@@ -26,7 +26,7 @@ public class AdminController {
      */
     @GetMapping
     public String getNoteForAdmin(Authentication authentication, Model model) {
-        User user = (User)authentication.getPrincipal();
+        User user = (User) authentication.getPrincipal();
         List<Note> notes = noteService.findByUser(user);
         model.addAttribute("notes", notes);
 

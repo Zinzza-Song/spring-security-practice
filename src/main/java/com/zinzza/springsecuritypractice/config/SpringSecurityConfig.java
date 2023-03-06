@@ -69,7 +69,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public UserDetailsService userDetailsService() {
         return username -> {
             User user = userService.findByUsername(username);
-            if(user == null)
+            if (user == null)
                 throw new UsernameNotFoundException(username);
 
             return user;
