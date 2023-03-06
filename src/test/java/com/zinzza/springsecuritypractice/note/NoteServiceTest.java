@@ -26,7 +26,7 @@ class NoteServiceTest {
     private NoteRepository noteRepository;
 
     @Test
-    void findByUser_유저가_게시물조회() {
+    void findByUser_User_GetNoteList() {
         // given
         User user = userRepository.save(new User("username", "password", "ROLE_USER"));
         noteRepository.save(new Note("title1", "content1", user));

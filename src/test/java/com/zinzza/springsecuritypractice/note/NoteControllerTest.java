@@ -46,7 +46,7 @@ class NoteControllerTest {
     }
 
     @Test
-    void getNote_인증없음() throws Exception {
+    void getNote_NoAuthentication() throws Exception {
         mockMvc.perform(get("/note"))
                 .andExpect(redirectedUrlPattern("**/login"))
                 .andExpect(status().is3xxRedirection());
@@ -59,7 +59,7 @@ class NoteControllerTest {
             userDetailsServiceBeanName = "userDetailsService", // UserDetailsService 구현체의 Bean
             setupBefore = TestExecutionEvent.TEST_EXECUTION // 테스트 실행 직전에 유저를 가져온다.
     )
-    void getNote_인증있음() throws Exception {
+    void getNote_Authentication() throws Exception {
         mockMvc.perform(
                         get("/note")
                 ).andExpect(status().isOk())
@@ -68,7 +68,7 @@ class NoteControllerTest {
     }
 
     @Test
-    void postNote_인증없음() throws Exception {
+    void postNote_NoAuthentication() throws Exception {
         mockMvc.perform(
                         post("/note").with(csrf())
                                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -84,7 +84,7 @@ class NoteControllerTest {
             userDetailsServiceBeanName = "userDetailsService",
             setupBefore = TestExecutionEvent.TEST_EXECUTION
     )
-    void postNote_어드민인증있음() throws Exception {
+    void postNote_AuthenticationWithAdmin() throws Exception {
         mockMvc.perform(
                 post("/note").with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -99,7 +99,7 @@ class NoteControllerTest {
             userDetailsServiceBeanName = "userDetailsService",
             setupBefore = TestExecutionEvent.TEST_EXECUTION
     )
-    void postNote_유저인증있음() throws Exception {
+    void postNote_AuthenticationWithUser() throws Exception {
         mockMvc.perform(
                 post("/note").with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -109,7 +109,7 @@ class NoteControllerTest {
     }
 
     @Test
-    void deleteNote_인증없음() throws Exception {
+    void deleteNote_NoAuthentication() throws Exception {
         Note note = noteRepository.save(new Note("제목", "내용", user));
         mockMvc.perform(
                         delete("/note?id=" + note.getId()).with(csrf())
@@ -123,7 +123,7 @@ class NoteControllerTest {
             userDetailsServiceBeanName = "userDetailsService",
             setupBefore = TestExecutionEvent.TEST_EXECUTION
     )
-    void deleteNote_유저인증있음() throws Exception {
+    void deleteNote_AuthenticationWithUser() throws Exception {
         Note note = noteRepository.save(new Note("제목", "내용", user));
         mockMvc.perform(
                 delete("/note?id=" + note.getId()).with(csrf())
@@ -136,7 +136,7 @@ class NoteControllerTest {
             userDetailsServiceBeanName = "userDetailsService",
             setupBefore = TestExecutionEvent.TEST_EXECUTION
     )
-    void deleteNote_어드민인증있음() throws Exception {
+    void deleteNote_AuthenticationWithAdmin() throws Exception {
         Note note = noteRepository.save(new Note("제목", "내용", user));
         mockMvc.perform(
                 delete("/note?id=" + note.getId()).with(csrf()).with(user(admin))

@@ -46,20 +46,20 @@ class AdminControllerTest {
     }
 
     @Test
-    void getNoteForAdmin_인증없음() throws Exception {
+    void getNoteForAdmin_NoAuthentication() throws Exception {
         mockMvc.perform(get("/admin").with(csrf())) // csrf 토큰 추가
                 .andExpect(redirectedUrlPattern("**/login"))
                 .andExpect(status().is3xxRedirection()); // login이 안되있으므로 로그인 페이지로 redirect
     }
 
     @Test
-    void getNoteForAdmin_어드민인증있음() throws Exception {
+    void getNoteForAdmin_AuthenticationWithAdmin() throws Exception {
         mockMvc.perform(get("/admin").with(csrf()).with(user(admin))) // 어드민 추가
                 .andExpect(status().is2xxSuccessful());
     }
 
     @Test
-    void getNoteForAdmin_유저인증있음() throws Exception {
+    void getNoteForAdmin_AuthenticationWithUser() throws Exception {
         mockMvc.perform(get("/admin").with(csrf()).with(user(user))) // 유저 추가
                 .andExpect(status().isForbidden()); // 접근 거부
     }

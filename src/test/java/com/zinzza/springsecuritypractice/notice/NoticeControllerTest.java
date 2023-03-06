@@ -34,7 +34,7 @@ class NoticeControllerTest {
     }
 
     @Test
-    void getNotice_인증없음() throws Exception {
+    void getNotice_NoAuthentication() throws Exception {
         mockMvc.perform(get("/notice"))
                 .andExpect(redirectedUrlPattern("**/login"))
                 .andExpect(status().is3xxRedirection());
@@ -42,14 +42,14 @@ class NoticeControllerTest {
 
     @Test
     @WithMockUser
-    void getNotice_인증있음() throws Exception {
+    void getNotice_Authentication() throws Exception {
         mockMvc.perform(get("/notice"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("notice/index"));
     }
 
     @Test
-    void postNotice_인증없음() throws Exception {
+    void postNotice_NoAuthentication() throws Exception {
         mockMvc.perform(
                 post("/notice")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -60,7 +60,7 @@ class NoticeControllerTest {
 
     @Test
     @WithMockUser(roles = {"USER"}, username = "admin", password = "admin")
-    void postNotice_유저인증있음() throws Exception {
+    void postNotice_AuthenticationWithUser() throws Exception {
         mockMvc.perform(
                 post("/notice").with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -71,7 +71,7 @@ class NoticeControllerTest {
 
     @Test
     @WithMockUser(roles = {"ADMIN"}, username = "admin", password = "admin")
-    void postNotice_어드민인증있음() throws Exception {
+    void postNotice_AuthenticationWithAdmin() throws Exception {
         mockMvc.perform(
                 post("/notice").with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -81,7 +81,7 @@ class NoticeControllerTest {
     }
 
     @Test
-    void deleteNotice_인증없음() throws Exception {
+    void deleteNotice_NoAuthentication() throws Exception {
         Notice notice = noticeRepository.save(new Notice("제목", "내용"));
         mockMvc.perform(
                 delete("/notice?id=" + notice.getId())
@@ -90,7 +90,7 @@ class NoticeControllerTest {
 
     @Test
     @WithMockUser(roles = {"USER"}, username = "admin", password = "admin")
-    void deleteNotice_유저인증있음() throws Exception {
+    void deleteNotice_AuthenticationWithUser() throws Exception {
         Notice notice = noticeRepository.save(new Notice("제목", "내용"));
         mockMvc.perform(
                 delete("/notice?id=" + notice.getId()).with(csrf())
@@ -99,7 +99,7 @@ class NoticeControllerTest {
 
     @Test
     @WithMockUser(roles = {"ADMIN"}, username = "admin", password = "admin")
-    void deleteNotice_어드민인증있음() throws Exception {
+    void deleteNotice_AuthenticationWithAdmin() throws Exception {
         Notice notice = noticeRepository.save(new Notice("제목", "내용"));
         mockMvc.perform(
                 delete("/notice?id=" + notice.getId()).with(csrf())
