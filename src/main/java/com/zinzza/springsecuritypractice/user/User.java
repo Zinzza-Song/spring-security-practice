@@ -22,12 +22,15 @@ public class User implements UserDetails {
     @GeneratedValue
     @Id
     private Long id;
-
     private String username;
     private String password;
     private String authority;
 
-    public User(String username, String password, String authority) {
+    public User(
+            String username,
+            String password,
+            String authority
+    ) {
         this.username = username;
         this.password = password;
         this.authority = authority;
@@ -39,7 +42,7 @@ public class User implements UserDetails {
     }
 
     public Boolean isAdmin() {
-        return authority.equals(("ROLE_ADMIN"));
+        return authority.equals("ROLE_ADMIN");
     }
 
     @Override
