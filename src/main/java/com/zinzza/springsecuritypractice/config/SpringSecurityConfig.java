@@ -1,6 +1,10 @@
 package com.zinzza.springsecuritypractice.config;
 
+import com.zinzza.springsecuritypractice.jwt.JwtAuthenticationFilter;
+import com.zinzza.springsecuritypractice.jwt.JwtAuthorizationFilter;
+import com.zinzza.springsecuritypractice.jwt.JwtProperties;
 import com.zinzza.springsecuritypractice.user.User;
+import com.zinzza.springsecuritypractice.user.UserRepository;
 import com.zinzza.springsecuritypractice.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -11,8 +15,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
@@ -24,12 +31,23 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserService userService;
+    private final UserRepository userRepository;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.httpBasic().disable(); // basic authentication filter 비활성화
-        http.csrf(); // csrf
-        http.rememberMe(); // remember me
+        http.csrf().disable(); // csrf
+        http.rememberMe().disable(); // remember me
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // 세션 사용 x
+
+        http.addFilterBefore(
+                new JwtAuthenticationFilter(authenticationManager()),
+                UsernamePasswordAuthenticationFilter.class
+        ).addFilterBefore(
+                new JwtAuthorizationFilter(userRepository),
+                BasicAuthenticationFilter.class
+        );
+
         http.authorizeRequests() // authorization(인가 설정)
                 // /, /home, /signup은 모두에게 허용
                 .antMatchers("/", "/home", "/signup").permitAll()
@@ -50,7 +68,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.logout() //로그아웃 설정
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/");
+                .logoutSuccessUrl("/")
+                .invalidateHttpSession(true)
+                .deleteCookies(JwtProperties.COOKIE_NAME);
     }
 
     @Override

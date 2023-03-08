@@ -25,6 +25,7 @@ public class NoteController {
     public String getNote(Authentication authentication, Model model) {
         User user = (User) authentication.getPrincipal();
         List<Note> notes = noteService.findByUser(user);
+        model.addAttribute("user", user);
         model.addAttribute("notes", notes);
 
         return "note/index";

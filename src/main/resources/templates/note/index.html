@@ -13,7 +13,7 @@
 <header th:insert="fragments.html::nav"></header>
 <!-- 개인 user만 접근할 수 있는 페이지 -->
 <div class="container">
-    <h1>개인노트</h1>
+    <h1 th:text="${user.username}">개인노트</h1>
 
     <!-- 노트 작성 Modal Button -->
     <button
